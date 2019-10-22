@@ -13,24 +13,25 @@
 ActiveRecord::Schema.define(version: 2019_10_22_133128) do
 
   create_table "bikes", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "location"
     t.string "type_of_bike"
     t.string "brand"
     t.string "size_of_bike"
     t.string "condition"
-    t.text "description"
+    t.boolean "available", default: true
   end
 
   create_table "requests", force: :cascade do |t|
-    t.string "pending_requests_sent"
-    t.string "pending_requests_received"
+    t.integer "requester_id"
+    t.integer "requestee_id"
     t.boolean "swap_completed"
   end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
-    t.integer "phone_number"
+    t.string "phone_number"
     t.string "email"
-    t.string "location"
     t.text "looking_for"
   end
 
