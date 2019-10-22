@@ -1,25 +1,28 @@
 require_relative '../config/environment'
-require_relative 'db/seeds.rb'
+# require_relative 'db/seeds.rb'
+require '/Users/hope/guided-module-one-project-assessment-dumbo-web-100719/db/seeds.rb'
 
-# puts "hello world"
+cli = CommandLineInterface.new
+cli.greet
+cli.exisiting_account_login
+cli.what_do
+
+# binding.pry
+
+# cli.create_new_user_account
 
 
 
-# def self.run
-#     puts "Let's get your life together!"
-#     selection = prompt.select("What do you want to do?", [
-#         { name: 'Login', value: 1 },
-#         { name: 'Sign Up', value: 2},git
-#         { name: 'Exit', value: 3}
-#     ])
-#     if selection == 1
-#         login
-#     elsif selection == 2
-#         sign_up
-#     elsif selection == 3
-#         return
-#     end
-# end
+
+#login/sign up stuff
+#create new plan 
+
+# puts "I can't wait to help make your new life plan!"
+# puts "First, let's pick a career!"
+# CommandLineInterface.pick_a_career
+
+
+
 
 
 

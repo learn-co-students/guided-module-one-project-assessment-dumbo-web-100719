@@ -1,9 +1,11 @@
 User.destroy_all
 Place.destroy_all
+Career.destroy_all
+Plan.destroy_all
 
 #users
-@javone = User.create(name: "javone")
-@hope = User.create(name: "hope")
+@javone = User.create(name: "javone", username: "javone_smith", password: "javone1")
+@hope = User.create(name: "hope", username: "hope_giometti", password: "hopeisthebest")
 
 #places
 @miami = Place.create(name: "Miami, Florida", median_income: 54_000)
