@@ -30,3 +30,7 @@ Plan.destroy_all
 @nurse = Career.create(name: "Nurse", salary: 73_500)
 @doctor = Career.create(name: "Doctor", salary: 294_000)
 @pilot = Career.create(name: "Pilot", salary: 130_000)
+
+#plans
+@hope_plan_1 = Plan.create(user: @hope, place: @miami, career: @developer)
+@hope_plan_2 = Plan.create(user: @hope, place: @la, career: @teacher)
