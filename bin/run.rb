@@ -5,8 +5,9 @@ require_all 'lib'
 
 cli = CommandLineInterface.new
 cli.greet
-cli.exisiting_account_login
-cli.what_do
+cli.begin
+# cli.exisiting_account_login
+# cli.what_do
 
 
 

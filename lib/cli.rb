@@ -5,8 +5,25 @@ require_all 'lib'
 class CommandLineInterface
 
     def greet
-        puts "Let's plan your life!"
+        puts "Hi! Welcome to the life planner!"
     end
+
+    def begin
+        selection = prompt.select("Have you planned your life before?", [
+            { name: "Yes!", value: 1},
+            { name: "No, but I would like to!", value: 2},
+            { name: "No, life planning is not for me.", value: 3}
+        ])
+        if selection == 1
+            exisiting_account_login
+        elsif
+            selection == 2
+            create_new_user_account
+        elsif selection == 3
+            puts "Okay, goodbye!"
+        end
+    end
+
 
     def exisiting_account_login
         puts "Please enter your username:"
@@ -21,24 +38,26 @@ class CommandLineInterface
             puts "Hello #{@user.name}. Welcome back!"
         end
         @user
+        what_do 
     end
 
     def create_new_user_account
         puts "What would you like your username to be?"
         user_username_input = gets.chomp
-        user = User.find_by(username: user_username_input)
-        if user == nil
+        @user = User.find_by(username: user_username_input)
+        if @user == nil
            puts "Nice! What's your name?"
            user_name = gets.chomp
            password = TTY::Prompt.new
            user_password = password.mask("Got it. Choose a password: ")
            puts "You are all set up, #{user_name}! Your username is #{user_username_input}."
-           user = User.create(name: user_name, username: user_username_input, password: user_password)
+           @user = User.create(name: user_name, username: user_username_input, password: user_password)
         else
             puts "Sorry that username is already taken."
             create_new_user_account
         end
-        user
+        @user.save
+        what_do
     end
 
     def what_do
@@ -50,21 +69,19 @@ class CommandLineInterface
         ])
         if selection == 1
             @user.make_a_new_plan
-            what_do
+            what_do unless selection == 4
+                # puts "Logged out."
         elsif selection == 2
             update_plan
-            what_do
+            what_do unless selection == 4
+                # puts "Logged out."
         elsif selection == 3
             @user.view_plans
-            what_do
+            what_do unless selection == 4
+                # puts "Logged out."
         elsif selection == 4
             puts "Okay, goodbye!"
         end
-    end
-
-    def make_new_plan
-        new_plan = Plan.create()
-        new_plan.pick_a_career
     end
 
     def prompt

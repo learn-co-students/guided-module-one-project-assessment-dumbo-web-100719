@@ -94,6 +94,7 @@ class User < ActiveRecord::Base
         elsif selection == 14
             @new_plan.place = Place.all.find {|place| place.name == "Denver, Colorado"}
         end
+        @new_plan.save
         puts "Awesome! Your new life plan is to move to #{@new_plan.place.name} and work as a #{@new_plan.career.name} and make $#{@new_plan.career.salary} per year!"
         puts "Sounds like a great life!"
             
