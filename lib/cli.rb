@@ -65,21 +65,24 @@ class CommandLineInterface
             { name: "Make a new plan", value: 1},
             { name: "Update plan", value: 2},
             { name: "View all plans", value: 3},
-            { name: "Exit", value: 4}
+            { name: "Delete plan", value: 4},
+            { name: "Exit", value: 5}
         ])
         if selection == 1
+            @user.pick_a_career
+            @user.pick_a_place
             @user.make_a_new_plan
-            what_do unless selection == 4
-                # puts "Logged out."
+            what_do unless selection == 5
         elsif selection == 2
-            update_plan
-            what_do unless selection == 4
-                # puts "Logged out."
+            @user.update_plan
+            what_do unless selection == 5
         elsif selection == 3
             @user.view_plans
-            what_do unless selection == 4
-                # puts "Logged out."
+            what_do unless selection == 5
         elsif selection == 4
+            @user.delete_plan
+            what_do unless selection == 5
+        elsif selection == 5
             puts "Okay, goodbye!"
         end
     end

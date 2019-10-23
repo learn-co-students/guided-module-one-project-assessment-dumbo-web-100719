@@ -1,7 +1,7 @@
-User.destroy_all
-Place.destroy_all
-Career.destroy_all
-Plan.destroy_all
+# User.destroy_all
+# Place.destroy_all
+# Career.destroy_all
+# Plan.destroy_all
 
 #users
 @javone = User.create(name: "javone", username: "javone_smith", password: "javone1")
