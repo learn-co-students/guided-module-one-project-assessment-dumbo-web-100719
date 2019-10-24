@@ -1,20 +1,66 @@
 class CommandLineInterface
 
     attr_accessor :current_user
+    # afplay ~lib/biking.mp3 &
 
-    def greet
-        render_ascii_art
+    def greet   
         puts "Welcome to SwapCycle"
     end
 
+    
+
     def render_ascii_art
-        File.readlines("biker.txt") do |line|
-          puts line
+        return_string = ""
+        File.foreach("lib/banner.txt") do |line|
+            return_string += line
         end
+        puts return_string
     end
 
     def prompt
         @prompt = TTY::Prompt.new
+    end
+
+    def update_profile
+        prompt.select "What Do You Want To Update" do |menu|
+            menu.choice "Update Name", ->{update_name}
+            menu.choice "Update Phone Number", ->{update_number}
+            menu.choice "Update Email", ->{update_email}
+            menu.choice "Update What You Are Looking For", ->{update_lf}
+            menu.choice "Go Back", -> {user_profile} 
+        end
+    end
+
+    def update_name
+        new_name = prompt.ask("New Name")
+        @current_user.update(name: new_name)
+        puts "Your Name Has Been Updated"
+        sleep(2)
+        update_profile
+    end
+
+    def update_number
+        new_number = prompt.ask("New Number")
+        @current_user.update(phone_number: new_number)
+        puts "Your Phone Number Has Been Updated"
+        sleep(2)
+        update_profile
+    end
+
+    def update_email
+        new_email = prompt.ask("New Email")
+        @current_user.update(email: new_nemail)
+        puts "Your Email Has Been Updated"
+        sleep(2)
+        update_profile
+    end
+
+    def update_lf
+        new_lf = prompt.ask("What Are You Looking For Now?")
+        @current_user.update(looking_for: new_lf)
+        puts "What You're Looking For Has Been Updated"
+        sleep(2)
+        update_profile
     end
 
     
@@ -51,28 +97,86 @@ class CommandLineInterface
 
     def main_menu
         prompt.select"<Main Menu>" do |menu|
+            menu.choice "View Your Profile", -> {user_profile}
             menu.choice "Add Your Bike to Swap", -> {add_new_bike}
             menu.choice "Remove Bike", -> {remove_bike}
             menu.choice "Request A Bike", -> {see_available_bikes}
-            menu.choice "Swap Requests", -> {see_all_requests}
-            menu.choice "Swaps Completed", -> {completed_swaps}
+            # menu.choice "Swap Requests", -> {see_all_requests}
+            # menu.choice "Swaps Completed", -> {completed_swaps,} 
             menu.choice "Sign Out", -> {login_prompt}
         end
     end
 
+    def user_profile
+        your_profile = User.find(@current_user.id)
+        
+        # binding.pry
+        # see_user = your_profile.map{|user| "#{user.name}, #{user.phone_number}, #{user.email}, #{user.looking_for}"}
+        
+        puts "Profile Name:  #{your_profile.name}"
+        puts "Email:  #{your_profile.email}"
+        puts "Phone Number:  #{your_profile.phone_number}"
+        puts "Looking For:  #{your_profile.looking_for}"
+        puts "Bikes: #{your_profile.bikes.map{|bike| bike.type_of_bike}.split(",")}"
+        prompt.select "Options" do |menu|
+            menu.choice "Update Profile", -> {update_profile}
+            menu.choice "Go Back", -> {main_menu}
+        end
+
+    end
+
     def add_new_bike
+        logged_in_user = User.find(@current_user.id)
         user_location = prompt.ask("Where Are You Located")
         bike_type = prompt.ask("Type of Bicycle")
         bike_brand = prompt.ask("Brand of Bicycle")
         bike_size = prompt.ask("Bicycle Size")
         bike_condition = prompt.ask("Condition of Bicycle")
-        @bike = Bike.create(user_id: @current_user.id, location: user_location, type_of_bike: bike_type, brand: bike_brand, size_of_bike: bike_size, condition: bike_condition, available: true)
+        @bike = Bike.create(user_id: logged_in_user.id, location: user_location, type_of_bike: bike_type, brand: bike_brand, size_of_bike: bike_size, condition: bike_condition, available: true)
         main_menu
+        sleep(5)
+        go_back_prompt = prompt.yes?("Yo, Do You Want To Go Back?")
+        if go_back_prompt != "n"
+            main_menu
+        else add_new_bike
+        end
     end
 
-    # def remove_bike
+    def remove_bike
+        logged_in_user = User.find(@current_user.id)
+        if logged_in_user.bikes.length == 0
+            puts "You Dont Have Any Bikes Bruh"
+            sleep(2)
+            main_menu
+        end
 
-    # end
+        users_bikes = logged_in_user.bikes.map {|bike| "#{bike.id}.#{bike.type_of_bike} - #{bike.location} "}
+        users_bikes.push "Back" 
+        bikes = prompt.select "Which Bike Do You Want To Remove", users_bikes
+            if bikes == "Back"
+                main_menu
+            end
+        remove_prompt = prompt.yes?("Dude, Are You Sure?")
+            if remove_prompt != "n"
+               destroy_bike = logged_in_user.bikes.find{|bike| bike.id == bikes[0..2].to_i}
+            #    binding.pry
+               destroy_bike.destroy
+               
+            #    binding.pry
+                puts "Bike Removed!"
+                main_menu
+            else bikes 
+            end
+
+        sleep(5)
+            go_back_prompt = prompt.yes?("Yo, Do You Want To Go Back?")
+                if go_back_prompt != "n"
+                    main_menu
+                else remove_bike
+                end
+    end
+
+
 
     ################################################
 
@@ -83,19 +187,37 @@ class CommandLineInterface
 
     def see_available_bikes #menu
     #    binding.pry
-        bikes = Bike.all.select{|bike| bike.user_id != @current_user.id }.split
-        bike_choice = prompt.select "<See All Bikes Available to Swap>", bikes
-        bike = Bike.find_by(type_of_bike: bike_choice)
+        all_bikes = Bike.all.map{|bike| bike}
+        all_your_bikes = @current_user.bikes.map{|bike| "#{bike.id}. #{bike.type_of_bike} - #{bike.location}"}
+       
+        bikes = all_bikes.select{|bike| bike.user_id != @current_user.id && bike.available == true}
+        bike_details = bikes.map {|bike| "#{bike.id}. #{bike.type_of_bike} - #{bike.location} "}
+        bike_details.push "Go Back"
+        bike_choice = prompt.select "<See All Bikes Available to Swap>", bike_details
+            if bike_choice == "Go Back"
+                main_menu
+            end
+        # binding.pry
         new_request = prompt.yes?("Do You Want To Request This Bike")
-            if new_request != "Y"
+            if new_request == "no"
                 see_available_bikes
-            else current_user.requesters << Request.create(requester_id: current_user.id, requestee_id: bike.user_id)
-                see_available_bikes
+            else
+                #if they hit yes, saves that choice to a variable
+                #create promot that asks you to selct your bike.
+                #that gets saved into a vvariable and passed into a new request
+                #both bikes availability turns into false
+                #exits to main menu
+            your_bike = prompt.select "Which Of Your Bikes Do You Want To Swap", all_your_bikes
+                Request.create(requester_bike_id: your_bike[0..2].to_i, requestee_bike_id: bike_choice[0..2].to_i) 
+                # bike_choice.available = false
+                # your_bike.available = false
+                puts "You Have Sent A Request! Good Luck!"
+                sleep(2)
+                main_menu                              
             end
         # @current_user.requests << Request.create(requesters: @current_user, :requestees @bikes.user_id) 
         # puts "You Sent A Request! Hope It Works Out!"
         # sleep(3)
-        main_menu  
     end
 
     
@@ -106,12 +228,15 @@ class CommandLineInterface
         prompt.select"<Request Menu>" do |menu|
             menu.choice "See All Requests You've Sent", -> {requests_sent_pending}
             menu.choice "See All Pending Requests Received", -> {requests_received_pending}
+            menu.choice "Go Back", -> {main_menu}
         end
     end
 
-    # def requests_sent_pending
-
-    # end
+    def requests_sent_pending
+       
+        pending_requests = Request.all.select{|request| request.requester_bike_id == @current_user.id}
+        binding.pry 
+    end
 
     ##################################################
 

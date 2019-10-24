@@ -23,8 +23,8 @@ ActiveRecord::Schema.define(version: 2019_10_22_133128) do
   end
 
   create_table "requests", force: :cascade do |t|
-    t.integer "requester_id"
-    t.integer "requestee_id"
+    t.integer "requester_bike_id"
+    t.integer "requestee_bike_id"
     t.boolean "swap_completed"
   end
 
