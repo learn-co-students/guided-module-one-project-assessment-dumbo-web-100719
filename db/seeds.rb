@@ -13,7 +13,7 @@
 @boston = Place.create(name: "Boston, Massachusetts", median_income: 64_000)
 @seattle = Place.create(name: "Seattle, Washington", median_income: 93_500)
 @charlotte = Place.create(name: "Charlotte, North Carolina", median_income: 53_000)
-@pittsburg = Place.create(name: "Pittsburg, Pennsylvania", median_income: 59_000)
+@pittsburgh = Place.create(name: "Pittsburgh, Pennsylvania", median_income: 59_000)
 @kansas_city = Place.create(name: "Kansas City, Missouri", median_income: 45_000)
 @cincinnati = Place.create(name: "Cincinnati, Ohio", median_income: 62_000)
 @san_diego = Place.create(name: "San Diego, California", median_income: 77_000)

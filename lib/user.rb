@@ -21,8 +21,6 @@ class User < ActiveRecord::Base
             { name: "doctor", value: 4 },
             { name: "pilot", value: 5 } 
         ])
-
-        plan.find(selection)
         if selection == 1
             @new_plan.career = Career.all.find {|career| career.name == "Software Developer"}
         elsif selection == 2
@@ -105,67 +103,120 @@ class User < ActiveRecord::Base
 
     def make_a_new_plan
         @new_plan.save
+        # binding.pry
         puts "Awesome! Your new life plan is to move to #{@new_plan.place.name} and work as a #{@new_plan.career.name} and make $#{@new_plan.career.salary} per year!"
         puts "Sounds like a great life!" 
     end
 
-
     def update_plan
-        array_of_plans = self.plans.map {|plan| {name: plan.place.name, value: plan.id}}
-        selection = prompt.select("Please pick a plan to change:", array_of_plans)
-        binding.pry
-        if selection == 
         # binding.pry
-    #   array=self.plans.map |plan| {name: plan.name, value: plan.id}
-        # puts "I'm sorry you aren't happy with all of your plans!"
-        # selection = prompt.select("Please pick a plan to change:", [
-        #    array_of_plans
-        # ])
-        # binding.pry
-        # if selection == array_of_plans
-        
-        # binding.pry
-
-
-        # if selection == 1
-        #     puts "Please tell me which career you want to change"
-        #     change_this_career = gets.chomp
-        #     # binding.pry
-        #     career_names = self.plans.all.map {|plan| plan.career.name}
-        #     career_names.find do |name|
-        #         if name == change_this_career
-        #         end
-        #     end
-        #     self.plans.all
-        #         # if plan.career == change_this_career
-        #         #     plan.career = change_this_career
-        #         #     binding.pry
-        #         # end
-        # elsif selection == 2
-        #     puts "cool2"
-        # elsif selection == 3
-        #     puts "Okay! I'm glad you're happy with your life!"
-        # end
-
-        # binding.pry
+        array_of_plans = self.plans.map {|plan| {name: "#{plan.career.name} in #{plan.place.name}", value: plan.id}}
+        selection = prompt.select("Please pick a plan to change:", array_of_plans.push({name: 'Nevermind', value: -1}))
+        if selection != -1
+            self.plans.each do |plan|
+                if plan.id == selection
+                    selection = prompt.select("Please pick a new career:", [
+                        { name: "developer", value: 1 },
+                        { name: "teacher", value: 2 },
+                        { name: "nurse", value: 3 },
+                        { name: "doctor", value: 4 },
+                        { name: "pilot", value: 5 } 
+                    ])
+                if selection == 1
+                    plan.career = Career.all.find {|career| career.name == "Software Developer"}
+                elsif selection == 2
+                    plan.career = Career.all.find {|career| career.name == "Teacher"}
+                elsif selection == 3
+                    plan.career = Career.all.find {|career| career.name == "Nurse"}
+                elsif selection == 4
+                    plan.career = Career.all.find {|career| career.name == "Doctor"}
+                elsif selection == 5
+                    plan.career = Career.all.find {|career| career.name == "Pilot"}
+                end
+                puts "Cool, your new career is #{plan.career.name} and your new salary is $#{plan.career.salary} a year!"
+                plan.save
+                end
+            end
+        else
+            puts "Okay, I'll keep all of your plans just the way they are!"
+                
+        end
+         
     end
+
+
+    # def update_plan
+    #     array_of_plans = self.plans.map {|plan| {name: plan.place.name, value: plan.id}}
+    #     selection = prompt.select("Please pick a plan to change:", array_of_plans)
+    #     binding.pry
+    #     if selection == 
+    #     # binding.pry
+    # #   array=self.plans.map |plan| {name: plan.name, value: plan.id}
+    #     # puts "I'm sorry you aren't happy with all of your plans!"
+    #     # selection = prompt.select("Please pick a plan to change:", [
+    #     #    array_of_plans
+    #     # ])
+    #     # binding.pry
+    #     # if selection == array_of_plans
+        
+    #     # binding.pry
+
+
+    #     # if selection == 1
+    #     #     puts "Please tell me which career you want to change"
+    #     #     change_this_career = gets.chomp
+    #     #     # binding.pry
+    #     #     career_names = self.plans.all.map {|plan| plan.career.name}
+    #     #     career_names.find do |name|
+    #     #         if name == change_this_career
+    #     #         end
+    #     #     end
+    #     #     self.plans.all
+    #     #         # if plan.career == change_this_career
+    #     #         #     plan.career = change_this_career
+    #     #         #     binding.pry
+    #     #         # end
+    #     # elsif selection == 2
+    #     #     puts "cool2"
+    #     # elsif selection == 3
+    #     #     puts "Okay! I'm glad you're happy with your life!"
+    #     # end
+
+    #     # binding.pry
+    # end
 
     def delete_plan
-        self.plans.all.each do |plan|
-            puts "Your plan is to move to #{plan.place.name} and work as a #{plan.career.name}!"
+        array_of_plans = self.plans.map {|plan| {name: "#{plan.career.name} in #{plan.place.name}", value: plan.id}}
+        selection = prompt.select("Please pick a plan to delete:", array_of_plans.push({name: 'Nevermind', value: -1}))
+        if selection != -1
+            self.plans.find do |plan|
+                if plan.id == selection
+                    plan.delete
+                end
+            end
+            puts "Your plan is gone. I'm glad. It was a terrible plan." 
+        else
+            puts "Okay, I won't delete any of your plans."
         end
-        puts "These are your current plans. I'm going to delete your most recent plan!"
-        selection = prompt.select("Is that okay with you?", [
-                {name: "Yes! I hated that plan!", value: 1},
-                {name: "No, wait, I loved that plan!", value: 2}
-        ])
-        if selection == 1   
-            self.plans.all.last.delete
-            puts "Your plan is gone. I'm glad. It was a terrible plan."
-        elsif selection == 2
-            puts "Okay, I won't delete anything!"
-        end
+
     end
+
+    # def delete_plan
+    #     self.plans.all.each do |plan|
+    #         puts "Your plan is to move to #{plan.place.name} and work as a #{plan.career.name}!"
+    #     end
+    #     puts "These are your current plans. I'm going to delete your most recent plan!"
+    #     selection = prompt.select("Is that okay with you?", [
+    #             {name: "Yes! I hated that plan!", value: 1},
+    #             {name: "No, wait, I loved that plan!", value: 2}
+    #     ])
+    #     if selection == 1   
+    #         self.plans.all.last.delete
+    #         puts "Your plan is gone. I'm glad. It was a terrible plan."
+    #     elsif selection == 2
+    #         puts "Okay, I won't delete anything!"
+    #     end
+    # end
 
     def prompt
         @prompt ||= TTY::Prompt.new
