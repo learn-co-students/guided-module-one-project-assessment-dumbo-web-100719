@@ -35,10 +35,23 @@ class User < ActiveRecord::Base
         puts "Cool, your new career is #{@new_plan.career.name} and your new salary is $#{@new_plan.career.salary} a year!"
     end
 
+    # def pick_a_lifestyle
+    #     selection = prompt.select("", [
+    #         { name: "beach bum", value: 1 },
+    #         { name: "Coastal Elite", value: 2 },
+    #         { name: "Small city, big town", value: 3 },
+    #         { name: "hipster", value: 4 }
+    # ])
+    # if selection == 1
+    #     @new_plan.place.lifestyle 
+
+    # end
+
     def pick_a_place
         selection = prompt.select("Let's look at some places:", [
             { name: "Best Value", value: 1 },
-            { name: "All Places", value: 2}
+            { name: "Lifestyles", value: 2},
+            { name: "All Places", value: 3}
             ])
             if selection == 1
                 Place.all.select do |place|
@@ -48,7 +61,43 @@ class User < ActiveRecord::Base
                         puts "#{place.name} is too expensive for you. Try changing your career."
                     end
                 end
-            elsif selection ==2
+            elsif selection == 2
+                selection = prompt.select("", [
+                    { name: "beach bum", value: 1 },
+                    { name: "Coastal Elite", value: 2 },
+                    { name: "Small city, big town", value: 3 },
+                    { name: "hipster", value: 4 }
+                ])
+                if selection == 1
+                    puts "These places would be perfect for a beach bum!"
+                    Place.all.each do |place|
+                        if place.lifestyle == "beach bum"
+                            puts place.name
+                        end
+                    end
+                elsif selection == 2
+                    puts "Move to these places to join the Coastal Elite!"
+                    Place.all.each do |place|
+                        if place.lifestyle == "Coastal Elite"
+                            puts place.name
+                        end
+                    end
+                elsif selection == 3
+                    puts "City amenties with a small town vibe? Count me in!"
+                    Place.all.each do |place|
+                        if place.lifestyle == "Small city, big town"
+                            puts place.name
+                        end
+                    end
+                elsif selection == 4
+                    puts "Seattle is a bit too mainstream for me, but maybe you'll like it."
+                    Place.all.each do |place|
+                        if place.lifestyle == "hipster"
+                            puts place.name
+                        end
+                    end
+                end
+            elsif selection == 3
                 Place.all.map do |place|
                     puts "Welcome to #{place.name}! The median income is #{place.median_income}."
                 end

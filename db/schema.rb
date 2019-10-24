@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_22_204148) do
+ActiveRecord::Schema.define(version: 2019_10_24_153559) do
 
   create_table "careers", force: :cascade do |t|
     t.string "name"
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 2019_10_22_204148) do
   create_table "places", force: :cascade do |t|
     t.string "name"
     t.integer "median_income"
+    t.string "lifestyle"
   end
 
   create_table "plans", force: :cascade do |t|
