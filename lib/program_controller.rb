@@ -167,18 +167,19 @@ class CommandLineInterface
                 main_menu
             end
         remove_prompt = prompt.yes?("Dude, Are You Sure?")
-            if remove_prompt = "Yes"
-               destroy_bike = logged_in_user.bikes.find{|bike| bike.id == bikes[0..2].to_i}
+            if remove_prompt != "Yes"
+               remove_bike
+            else destroy_bike = logged_in_user.bikes.find{|bike| bike.id == bikes[0..2].to_i}
             #    binding.pry
                destroy_bike.destroy
                
             #    binding.pry
                 puts "Bike Removed!"
                 main_menu
-            else bikes 
+                sleep(5)
             end
 
-        sleep(5)
+        
             go_back_prompt = prompt.yes?("Yo, Do You Want To Go Back?")
                 if go_back_prompt != "n"
                     main_menu
