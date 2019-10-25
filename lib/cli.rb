@@ -1,52 +1,70 @@
+require_relative '../config/environment'
 require 'pry'
 require_rel '../lib'
+
 class CommandLineInterface
 
+    
     def greet 
-        system "clear"
-        puts "Welcome to Feelings.mp3"
+        #system "clear"
+        puts ('Welcome to Feelings.mp3').yellow
+        
         puts "------------------------"
         puts "Thanks for joining us!!"
-        sleep(2)
+        sleep(30)
         system "clear"
+        
         prompt = TTY::Prompt.new
-        choices = {register: 1, guest: 2}
+        choices = {register: 1, continue_as_guest: 2}
         selection = prompt.select("Let's get started!", choices)
         if selection == 1
             User.register
         elsif selection == 2
-            feeling
+            guest_menu
         end 
         feeling 
     end 
 
     def feeling
-        puts "We offer a service that reccommends a database based on your mood"
+        puts "We offer a service that recommends a database based on your mood"
         prompt = TTY::Prompt.new
         feeling_choices = {hyped: 1, heartbroken: 2, chill: 3, skip: 4}
-        feeling_selection = prompt.select("How are you feeling?", feeling_choices)
-        puts "loading..."
-        sleep (2)
-        system "clear"
+        feeling_selection = prompt.select("How are you feeling todaycle?", feeling_choices)
+        
         if feeling_selection == 1
+            puts "loading..."
+            sleep (2)
+            system "clear"
             puts "Here's what we got for you..."
             puts "---------------------------"
+            Run.hyped
+            
             song = Song.all.map do |song|
                 if song.feeling == "hyped"
                     puts "#{song.name} by #{song.artist}"
                 end 
             end 
         elsif feeling_selection == 2
+            puts "loading..."
+            sleep (2)
+            system "clear"
             puts "Here's what we got for you..."
             puts "---------------------------"
+            fork{exec'afplay', "./lib/music/off_heartbroken.mp3"}
+            
             song = Song.all.map do |song|
                 if song.feeling == "heartbroken"
                     puts "#{song.name} by #{song.artist}"
                 end 
             end 
         elsif feeling_selection == 3
+            puts "loading..."
+            sleep (2)
+            system "clear"
             puts "Here's what we got for you..."
             puts "---------------------------"
+            fork{exec'afplay', "./lib/music/off_chill.mp3"}
+            
             song = Song.all.map do |song|
                 if song.feeling == "chill"
                     puts "#{song.name} by #{song.artist}"
@@ -65,6 +83,75 @@ class CommandLineInterface
         main_menu
     end 
 
+    def guest_menu
+        system "clear"
+        puts "We offer a service that reccommends a database based on your mood".red 
+        puts "----------------------------------------------------------------------"
+        prompt = TTY::Prompt.new
+        feeling_choices = {hyped: 1, heartbroken: 2, chill: 3, exit: 4}
+        feeling_selection = prompt.select("How are you feeling?", feeling_choices)
+        puts "loading..."
+        sleep (2)
+        system "clear"
+        if feeling_selection == 1
+            puts "loading..."
+            sleep (2)
+            system "clear"
+            puts "Here's what we got for you...".yellow
+            puts "---------------------------"
+            song = Song.all.map do |song|
+                if song.feeling == "hyped"
+                    puts "#{song.name} by #{song.artist}"
+                end 
+            end 
+            puts ""
+            puts ""
+            puts "We hope you enjoy this creation!"
+        elsif feeling_selection == 2
+            puts "loading..."
+            sleep (2)
+            system "clear"
+            puts "Here's what we got for you...".yellow
+            puts "---------------------------"
+            song = Song.all.map do |song|
+                if song.feeling == "heartbroken"
+                    puts "#{song.name} by #{song.artist}"
+                end 
+            end
+            puts ""
+            puts ""
+            puts ""
+            puts "We hope you enjoy this creation!" 
+        elsif feeling_selection == 3
+            puts "loading..."
+            sleep (2)
+            system "clear"
+            puts "Here's what we got for you...".yellow
+            puts "---------------------------"
+            song = Song.all.map do |song|
+                if song.feeling == "chill"
+                    puts "#{song.name} by #{song.artist}"
+                end 
+            end
+            puts ""
+            puts ""
+            puts ""
+            puts "We hope you enjoy this creation!" 
+
+        elsif feeling_selection == 4
+            system "clear"
+
+            puts "Thanks for dropping in... Goodbye!".blue
+            sleep(3)
+            exit
+        end 
+        sleep(10) 
+        puts "Thanks for dropping in... Goodbye!".blue
+            
+        exit
+    end
+
+
     def main_menu
         sleep (2)
         puts "----MAIN MENU----"
@@ -79,6 +166,7 @@ class CommandLineInterface
         when 3
             exit
         end 
+        main_menu
     end 
 
     def update_profile

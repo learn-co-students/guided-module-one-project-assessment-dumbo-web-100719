@@ -9,3 +9,6 @@ gem "faker"
 gem "rake"
 gem 'activerecord', "~>5.2.3"
 gem "tty-prompt", "~> 0.19.0"
+gem 'colorize'
+gem 'artii'
+gem 'lolcat'
