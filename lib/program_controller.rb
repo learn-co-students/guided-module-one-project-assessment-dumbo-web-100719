@@ -136,6 +136,7 @@ class CommandLineInterface
 
     def add_new_bike
         logged_in_user = User.find(@current_user.id)
+        puts "Follow Instructions To Add The Bike You Want To Swap"
         user_location = prompt.ask("Where Are You Located")
         bike_type = prompt.ask("Type of Bicycle")
         bike_brand = prompt.ask("Brand of Bicycle")
@@ -166,7 +167,7 @@ class CommandLineInterface
                 main_menu
             end
         remove_prompt = prompt.yes?("Dude, Are You Sure?")
-            if remove_prompt != "no"
+            if remove_prompt = "Yes"
                destroy_bike = logged_in_user.bikes.find{|bike| bike.id == bikes[0..2].to_i}
             #    binding.pry
                destroy_bike.destroy
@@ -196,10 +197,17 @@ class CommandLineInterface
 
     def see_available_bikes #menu
     #    binding.pry
+        user_bikes = User.find(@current_user.id)
         all_bikes = Bike.all.map{|bike| bike}
-        all_your_bikes = @current_user.bikes.map{|bike| "#{bike.id}. #{bike.type_of_bike} - #{bike.location}"}
+        all_your_bikes = user_bikes.bikes.map{|bike| "#{bike.id}. #{bike.type_of_bike} - #{bike.location}"}
+
+        if all_your_bikes.length == 0
+            puts "You Dont Have Any Bikes To Swap Bruh! Add A Bike"
+            sleep(2)
+            main_menu
+        end
        
-        bikes = all_bikes.select{|bike| bike.user_id != @current_user.id && bike.available == true}
+        bikes = all_bikes.select{|bike| bike.user_id != user_bikes.id && bike.available == true}
         bike_details = bikes.map {|bike| "#{bike.id}. #{bike.type_of_bike} - #{bike.location} "}
         bike_details.push "Go Back"
         bike_choice = prompt.select "<See All Bikes Available to Swap>", bike_details
@@ -216,8 +224,13 @@ class CommandLineInterface
                 #that gets saved into a vvariable and passed into a new request
                 #both bikes availability turns into false
                 #exits to main menu
+                # binding.pry
             your_bike = prompt.select "Which Of Your Bikes Do You Want To Swap", all_your_bikes
-                Request.create(requester_bike_id: your_bike[0..2].to_i, requestee_bike_id: bike_choice[0..2].to_i) 
+                
+            
+
+                Request.create(requester_bike_id: your_bike[0..2].to_i, requestee_bike_id: bike_choice[0..2].to_i)
+                 
                 # bike_choice.available = false
                 # your_bike.available = false
                 puts "You Have Sent A Request! Good Luck!"
