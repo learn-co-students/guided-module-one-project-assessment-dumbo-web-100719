@@ -7,6 +7,15 @@ class CommandLineInterface
         puts "Welcome to SwapCycle"
     end
 
+    def music
+        pid = fork{exec 'afplay', "./bin/music/bikingclip.mp3"}
+        
+    end
+
+    def end_music
+        pid = fork{exec 'killall', "afplay" }
+    end
+
     
 
     def render_ascii_art
@@ -151,13 +160,13 @@ class CommandLineInterface
         end
 
         users_bikes = logged_in_user.bikes.map {|bike| "#{bike.id}.#{bike.type_of_bike} - #{bike.location} "}
-        users_bikes.push "Back" 
+        users_bikes.push "Go Back" 
         bikes = prompt.select "Which Bike Do You Want To Remove", users_bikes
-            if bikes == "Back"
+            if bikes == "Go Back"
                 main_menu
             end
         remove_prompt = prompt.yes?("Dude, Are You Sure?")
-            if remove_prompt != "n"
+            if remove_prompt != "no"
                destroy_bike = logged_in_user.bikes.find{|bike| bike.id == bikes[0..2].to_i}
             #    binding.pry
                destroy_bike.destroy
